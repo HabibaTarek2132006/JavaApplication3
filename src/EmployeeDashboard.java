@@ -1,26 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author tarek
- */
 import javax.swing.*;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class EmployeeDashboard extends JFrame {
+
+    User currentUser;
 
     JButton addCustomerBtn, showCustomerBtn, searchCustomerBtn;
     JButton makeOrderBtn, cancelOrderBtn, showOrdersBtn;
     JButton billingBtn;
+    JButton logoutBtn;
+    JButton updateInfoBtn;
 
     JTextArea output;
 
-    public EmployeeDashboard() {
+    public EmployeeDashboard(User user) {
+
+        this.currentUser = user;
 
         setTitle("Employee Dashboard");
-        setSize(650, 450);
+        setSize(650, 500);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -44,9 +42,14 @@ public class EmployeeDashboard extends JFrame {
         billingBtn = new JButton("Billing");
         billingBtn.setBounds(20, 100, 150, 30);
 
+        updateInfoBtn = new JButton("Update Info");
+        updateInfoBtn.setBounds(180, 100, 150, 30);
+
+        logoutBtn = new JButton("Logout");
+        logoutBtn.setBounds(340, 100, 150, 30);
+
         output = new JTextArea();
-        output.setBounds(20, 150, 590, 230);
-        add(output);
+        output.setBounds(20, 150, 590, 280);
 
         add(addCustomerBtn);
         add(showCustomerBtn);
@@ -55,6 +58,9 @@ public class EmployeeDashboard extends JFrame {
         add(cancelOrderBtn);
         add(showOrdersBtn);
         add(billingBtn);
+        add(updateInfoBtn);
+        add(logoutBtn);
+        add(output);
 
         // ================= CUSTOMER =================
 
@@ -62,6 +68,7 @@ public class EmployeeDashboard extends JFrame {
             String name = JOptionPane.showInputDialog("Customer Name:");
             Customer c = new Customer(DataStore.customers.size() + 1, name);
             DataStore.customers.add(c);
+            FileManager.saveAll();
             JOptionPane.showMessageDialog(this, "Customer Added");
         });
 
@@ -136,21 +143,16 @@ public class EmployeeDashboard extends JFrame {
                 return;
             }
 
-            // ✅ Order creation
             Order order = new Order(customer);
-            order.customer = customer;
             order.meals.add(selectedMeal);
             order.calculateTotal();
 
             DataStore.orders.add(order);
 
-            // ✅ IMPORTANT: update customer profile properly
-            customer.addOrder(order);
-            customer.addPayment(order.totalPrice);
+            FileManager.saveAll();
 
             JOptionPane.showMessageDialog(this,
-                    "Order Created ✔ Total: " + order.totalPrice
-            );
+                    "Order Created ✔ Total: " + order.totalPrice);
         });
 
         cancelOrderBtn.addActionListener(e -> {
@@ -158,6 +160,8 @@ public class EmployeeDashboard extends JFrame {
             int id = Integer.parseInt(JOptionPane.showInputDialog("Order ID"));
 
             DataStore.orders.removeIf(o -> o.id == id);
+
+            FileManager.saveAll();
 
             JOptionPane.showMessageDialog(this, "Order Cancelled");
         });
@@ -194,9 +198,43 @@ public class EmployeeDashboard extends JFrame {
 
             JOptionPane.showMessageDialog(this,
                     "Total Payments = " + customer.totalPayments +
-                    "\nPoints = " + customer.loyaltyPoints +
-                    "\nGifts = " + customer.gifts
-            );
+                            "\nPoints = " + customer.loyaltyPoints +
+                            "\nGifts = " + customer.gifts);
         });
+
+        // ================= UPDATE INFO =================
+
+        updateInfoBtn.addActionListener(e -> {
+
+            String newName = JOptionPane.showInputDialog("New Name:");
+            String newUsername = JOptionPane.showInputDialog("New Username:");
+            String newPassword = JOptionPane.showInputDialog("New Password:");
+
+            if (newName == null || newUsername == null || newPassword == null) {
+                return;
+            }
+
+            currentUser.name = newName;
+            currentUser.username = newUsername;
+            currentUser.password = newPassword;
+
+            FileManager.saveAll();
+
+            JOptionPane.showMessageDialog(this,
+                    "Information Updated Successfully ✔");
+        });
+
+        // ================= LOGOUT =================
+
+        logoutBtn.addActionListener(e -> {
+
+            JOptionPane.showMessageDialog(this,
+                    currentUser.name + " logged out successfully");
+
+            new LoginScreen().setVisible(true);
+            this.dispose();
+        });
+
+        setVisible(true);
     }
 }

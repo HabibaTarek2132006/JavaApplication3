@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author tarek
- */
 import javax.swing.*;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class LoginScreen extends JFrame {
 
@@ -35,33 +27,52 @@ public class LoginScreen extends JFrame {
         add(passwordField);
         add(loginBtn);
 
-        // ✅ هنا المكان الصح
+        // ================= LOGIN =================
         loginBtn.addActionListener(e -> {
 
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
 
+            // ================= EMPLOYEE LOGIN =================
             for (Employee emp : DataStore.employees) {
 
                 if (emp.username.equals(username) && emp.password.equals(password)) {
 
                     JOptionPane.showMessageDialog(this, "Welcome " + emp.name);
 
-                    new EmployeeDashboard().setVisible(true);
-                    dispose();
+                    User user = new User(
+                            emp.id,
+                            emp.name,
+                            emp.username,
+                            emp.password,
+                            Role.EMPLOYEE
+                    );
+
+                    new EmployeeDashboard(user).setVisible(true);
+                    this.dispose();
                     return;
                 }
             }
 
+            // ================= ADMIN LOGIN =================
             if (username.equals("admin") && password.equals("1234")) {
 
-                new AdminDashboard().setVisible(true);
-                dispose();
+                User admin = new User(
+                        0,
+                        "Admin",
+                        "admin",
+                        "1234",
+                        Role.ADMIN
+                );
+
+                new AdminDashboard(admin).setVisible(true);
+                this.dispose();
+                return;
             }
 
-            else {
-                JOptionPane.showMessageDialog(this, "Invalid Login");
-            }
+            JOptionPane.showMessageDialog(this, "Invalid Login");
         });
+
+        setVisible(true);
     }
 }

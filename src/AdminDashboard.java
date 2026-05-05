@@ -1,23 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author tarek
- */
 import javax.swing.*;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class AdminDashboard extends JFrame {
+
+    User currentUser;
 
     JButton addEmpBtn, showEmpBtn, deleteEmpBtn, updateEmpBtn, searchEmpBtn;
     JButton addMealBtn, showMealBtn, updateMealBtn, searchMealBtn;
     JButton addOfferBtn, employeeReportBtn, mealReportBtn;
+    JButton logoutBtn;
 
     JTextArea output;
 
-    public AdminDashboard() {
+    public AdminDashboard(User user) {
+
+        this.currentUser = user;
 
         setTitle("Admin Dashboard");
         setSize(700, 500);
@@ -51,13 +48,16 @@ public class AdminDashboard extends JFrame {
 
         // ================= OFFERS =================
         addOfferBtn = new JButton("Add Offer");
-
         employeeReportBtn = new JButton("Emp Report");
         mealReportBtn = new JButton("Meal Report");
 
         addOfferBtn.setBounds(20, 100, 120, 30);
         employeeReportBtn.setBounds(150, 100, 120, 30);
         mealReportBtn.setBounds(280, 100, 120, 30);
+
+        // ================= LOGOUT =================
+        logoutBtn = new JButton("Logout");
+        logoutBtn.setBounds(540, 100, 120, 30);
 
         // ================= OUTPUT =================
         output = new JTextArea();
@@ -79,8 +79,9 @@ public class AdminDashboard extends JFrame {
         add(addOfferBtn);
         add(employeeReportBtn);
         add(mealReportBtn);
+        add(logoutBtn);
 
-        // ============= EMPLOYEES =============
+        // ================= EMPLOYEES =================
 
         addEmpBtn.addActionListener(e -> {
 
@@ -94,6 +95,8 @@ public class AdminDashboard extends JFrame {
             );
 
             DataStore.employees.add(emp);
+            FileManager.saveAll();
+
             JOptionPane.showMessageDialog(this, "Employee Added");
         });
 
@@ -113,6 +116,8 @@ public class AdminDashboard extends JFrame {
             int id = Integer.parseInt(JOptionPane.showInputDialog("ID:"));
             DataStore.employees.removeIf(emp -> emp.id == id);
 
+            FileManager.saveAll();
+
             JOptionPane.showMessageDialog(this, "Deleted");
         });
 
@@ -125,6 +130,9 @@ public class AdminDashboard extends JFrame {
 
                     emp.name = JOptionPane.showInputDialog("New Name:");
                     emp.username = JOptionPane.showInputDialog("New Username:");
+                    emp.password = JOptionPane.showInputDialog("New Password:");
+
+                    FileManager.saveAll();
 
                     JOptionPane.showMessageDialog(this, "Updated");
                     return;
@@ -146,7 +154,7 @@ public class AdminDashboard extends JFrame {
             output.setText("Not Found");
         });
 
-        // ============= MEALS =============
+        // ================= MEALS =================
 
         addMealBtn.addActionListener(e -> {
 
@@ -154,6 +162,8 @@ public class AdminDashboard extends JFrame {
             double price = Double.parseDouble(JOptionPane.showInputDialog("Price:"));
 
             DataStore.meals.add(new Meal(DataStore.meals.size() + 1, name, price));
+
+            FileManager.saveAll();
 
             JOptionPane.showMessageDialog(this, "Meal Added");
         });
@@ -179,6 +189,8 @@ public class AdminDashboard extends JFrame {
                     m.name = JOptionPane.showInputDialog("New Name:");
                     m.price = Double.parseDouble(JOptionPane.showInputDialog("New Price:"));
 
+                    FileManager.saveAll();
+
                     JOptionPane.showMessageDialog(this, "Updated");
                     return;
                 }
@@ -199,22 +211,24 @@ public class AdminDashboard extends JFrame {
             output.setText("Not Found");
         });
 
-        // ============= OFFERS FIXED =============
+        // ================= OFFERS =================
 
-      addOfferBtn.addActionListener(e -> {
+        addOfferBtn.addActionListener(e -> {
 
-    String offer = JOptionPane.showInputDialog("Offer:");
+            String offer = JOptionPane.showInputDialog("Offer:");
 
-    DataStore.offers.add(offer);
+            DataStore.offers.add(offer);
 
-    for (Customer c : DataStore.customers) {
-        c.addOffer(offer); // ده كفاية
-    }
+            for (Customer c : DataStore.customers) {
+                c.addOffer(offer);
+            }
 
-    JOptionPane.showMessageDialog(this, "Offer Added");
-});
+            FileManager.saveAll();
 
-        // ============= REPORTS =============
+            JOptionPane.showMessageDialog(this, "Offer Added");
+        });
+
+        // ================= REPORTS =================
 
         employeeReportBtn.addActionListener(e -> {
 
@@ -237,5 +251,18 @@ public class AdminDashboard extends JFrame {
 
             output.setText(report);
         });
+
+        // ================= LOGOUT =================
+
+        logoutBtn.addActionListener(e -> {
+
+            JOptionPane.showMessageDialog(this,
+                    currentUser.name + " logged out successfully");
+
+            new LoginScreen().setVisible(true);
+            this.dispose();
+        });
+
+        setVisible(true);
     }
 }
