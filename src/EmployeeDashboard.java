@@ -1,5 +1,4 @@
 import javax.swing.*;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class EmployeeDashboard extends JFrame {
 
@@ -10,7 +9,7 @@ public class EmployeeDashboard extends JFrame {
     JButton billingBtn;
     JButton logoutBtn;
     JButton updateInfoBtn;
-    JButton profileBtn; // ⭐ NEW
+    JButton profileBtn;
 
     JTextArea output;
 
@@ -49,7 +48,6 @@ public class EmployeeDashboard extends JFrame {
         logoutBtn = new JButton("Logout");
         logoutBtn.setBounds(340, 100, 150, 30);
 
-        // ⭐ NEW BUTTON
         profileBtn = new JButton("Customer Profile");
         profileBtn.setBounds(500, 100, 150, 30);
 
@@ -65,19 +63,23 @@ public class EmployeeDashboard extends JFrame {
         add(billingBtn);
         add(updateInfoBtn);
         add(logoutBtn);
-        add(profileBtn); // ⭐ NEW
+        add(profileBtn);
         add(output);
 
-        // ================= CUSTOMER =================
-
+        // ================= ADD CUSTOMER =================
         addCustomerBtn.addActionListener(e -> {
-            String name = JOptionPane.showInputDialog("Customer Name:");
+
+            String name = InputValidator.getNameOnly(this, "Customer Name:");
+            if (name == null) return;
+
             Customer c = new Customer(DataStore.customers.size() + 1, name);
             DataStore.customers.add(c);
             FileManager.saveAll();
-            JOptionPane.showMessageDialog(this, "Customer Added");
+
+            output.setText("✔ Customer Added");
         });
 
+        // ================= SHOW =================
         showCustomerBtn.addActionListener(e -> {
 
             String data = "";
@@ -91,25 +93,27 @@ public class EmployeeDashboard extends JFrame {
             output.setText(data);
         });
 
+        // ================= SEARCH =================
         searchCustomerBtn.addActionListener(e -> {
 
-            String name = JOptionPane.showInputDialog("Search Name:");
+            String name = InputValidator.getNameOnly(this, "Search Name:");
+            if (name == null) return;
 
             for (Customer c : DataStore.customers) {
                 if (c.name.equalsIgnoreCase(name)) {
-                    output.setText("Found: " + c.name);
+                    output.setText("✔ Found: " + c.name);
                     return;
                 }
             }
 
-            output.setText("Not Found");
+            output.setText("❌ Not Found");
         });
 
-        // ================= ORDERS =================
-
+        // ================= MAKE ORDER =================
         makeOrderBtn.addActionListener(e -> {
 
-            int customerId = Integer.parseInt(JOptionPane.showInputDialog("Customer ID"));
+            Integer customerId = InputValidator.getInt(this, "Customer ID:");
+            if (customerId == null) return;
 
             Customer customer = null;
 
@@ -121,7 +125,7 @@ public class EmployeeDashboard extends JFrame {
             }
 
             if (customer == null) {
-                JOptionPane.showMessageDialog(this, "Customer Not Found");
+                output.setText("❌ Customer Not Found");
                 return;
             }
 
@@ -133,7 +137,8 @@ public class EmployeeDashboard extends JFrame {
 
             JOptionPane.showMessageDialog(this, mealsText);
 
-            int mealId = Integer.parseInt(JOptionPane.showInputDialog("Enter Meal ID"));
+            Integer mealId = InputValidator.getInt(this, "Enter Meal ID:");
+            if (mealId == null) return;
 
             Meal selectedMeal = null;
 
@@ -145,7 +150,7 @@ public class EmployeeDashboard extends JFrame {
             }
 
             if (selectedMeal == null) {
-                JOptionPane.showMessageDialog(this, "Meal Not Found");
+                output.setText("❌ Meal Not Found");
                 return;
             }
 
@@ -154,24 +159,24 @@ public class EmployeeDashboard extends JFrame {
             order.calculateTotal();
 
             DataStore.orders.add(order);
-
             FileManager.saveAll();
 
-            JOptionPane.showMessageDialog(this,
-                    "Order Created ✔ Total: " + order.totalPrice);
+            output.setText("✔ Order Created | Total: " + order.totalPrice);
         });
 
+        // ================= CANCEL =================
         cancelOrderBtn.addActionListener(e -> {
 
-            int id = Integer.parseInt(JOptionPane.showInputDialog("Order ID"));
+            Integer id = InputValidator.getInt(this, "Order ID:");
+            if (id == null) return;
 
             DataStore.orders.removeIf(o -> o.id == id);
-
             FileManager.saveAll();
 
-            JOptionPane.showMessageDialog(this, "Order Cancelled");
+            output.setText("✔ Order Cancelled");
         });
 
+        // ================= SHOW ORDERS =================
         showOrdersBtn.addActionListener(e -> {
 
             String data = "";
@@ -186,35 +191,10 @@ public class EmployeeDashboard extends JFrame {
         });
 
         // ================= BILLING =================
-
         billingBtn.addActionListener(e -> {
 
-            int customerId = Integer.parseInt(JOptionPane.showInputDialog("Customer ID"));
-
-            Customer customer = null;
-
-            for (Customer c : DataStore.customers) {
-                if (c.id == customerId) {
-                    customer = c;
-                    break;
-                }
-            }
-
-            if (customer == null) return;
-
-            JOptionPane.showMessageDialog(this,
-                    "Total Payments = " + customer.totalPayments +
-                            "\nPoints = " + customer.loyaltyPoints +
-                            "\nGifts = " + customer.gifts);
-        });
-
-        // ================= CUSTOMER PROFILE ⭐ NEW =================
-
-        profileBtn.addActionListener(e -> {
-
-            int id = Integer.parseInt(
-                    JOptionPane.showInputDialog("Enter Customer ID")
-            );
+            Integer id = InputValidator.getInt(this, "Customer ID:");
+            if (id == null) return;
 
             Customer customer = null;
 
@@ -226,60 +206,72 @@ public class EmployeeDashboard extends JFrame {
             }
 
             if (customer == null) {
-                output.setText("Customer Not Found");
+                output.setText("❌ Customer Not Found");
                 return;
             }
 
             output.setText(
-                    "=== CUSTOMER PROFILE ===\n" +
-                    "Name: " + customer.name + "\n" +
-                    "ID: " + customer.id + "\n\n" +
-                    "Payments: " + customer.totalPayments + "\n" +
-                    "Points: " + customer.loyaltyPoints + "\n\n" +
-                    "Orders: " + customer.orders + "\n" +
-                    "Gifts: " + customer.gifts + "\n" +
-                    "Offers: " + customer.offers + "\n"
+                    "Payments: " + customer.totalPayments +
+                    "\nPoints: " + customer.loyaltyPoints +
+                    "\nGifts: " + customer.gifts
             );
         });
 
-        // ================= UPDATE INFO =================
+        // ================= PROFILE =================
+        profileBtn.addActionListener(e -> {
 
-        updateInfoBtn.addActionListener(e -> {
+            Integer id = InputValidator.getInt(this, "Customer ID:");
+            if (id == null) return;
 
-            String newName = JOptionPane.showInputDialog("New Name:");
-            String newUsername = JOptionPane.showInputDialog("New Username:");
-            String newPassword = JOptionPane.showInputDialog("New Password:");
+            for (Customer c : DataStore.customers) {
+                if (c.id == id) {
 
-            if (newName == null || newUsername == null || newPassword == null) {
-                return;
+                    output.setText(
+                            "=== CUSTOMER PROFILE ===\n" +
+                            "Name: " + c.name + "\n" +
+                            "ID: " + c.id + "\n\n" +
+                            "Payments: " + c.totalPayments + "\n" +
+                            "Points: " + c.loyaltyPoints + "\n\n" +
+                            "Orders: " + c.orders + "\n" +
+                            "Gifts: " + c.gifts + "\n" +
+                            "Offers: " + c.offers + "\n"
+                    );
+                    return;
+                }
             }
 
-            currentUser.name = newName;
-            currentUser.username = newUsername;
-            currentUser.password = newPassword;
+            output.setText("❌ Not Found");
+        });
+
+        // ================= UPDATE =================
+        updateInfoBtn.addActionListener(e -> {
+
+            String name = InputValidator.getNameOnly(this, "New Name:");
+            String username = InputValidator.getText(this, "New Username:");
+            String password = InputValidator.getText(this, "New Password:");
+
+            if (name == null || username == null || password == null) return;
+
+            currentUser.name = name;
+            currentUser.username = username;
+            currentUser.password = password;
 
             for (Employee emp : DataStore.employees) {
                 if (emp.id == currentUser.id) {
-                    emp.name = newName;
-                    emp.username = newUsername;
-                    emp.password = newPassword;
+                    emp.name = name;
+                    emp.username = username;
+                    emp.password = password;
                     break;
                 }
             }
 
             FileManager.saveAll();
 
-            JOptionPane.showMessageDialog(this,
-                    "Information Updated Successfully ✔");
+            output.setText("✔ Updated Successfully");
         });
 
         // ================= LOGOUT =================
-
         logoutBtn.addActionListener(e -> {
-
-            JOptionPane.showMessageDialog(this,
-                    currentUser.name + " logged out successfully");
-
             new LoginScreen().setVisible(true);
             this.dispose();
         });
