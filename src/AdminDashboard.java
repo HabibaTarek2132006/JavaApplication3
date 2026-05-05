@@ -1,5 +1,4 @@
 import javax.swing.*;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class AdminDashboard extends JFrame {
 
@@ -8,7 +7,7 @@ public class AdminDashboard extends JFrame {
     JButton addEmpBtn, showEmpBtn, deleteEmpBtn, updateEmpBtn, searchEmpBtn;
     JButton addMealBtn, showMealBtn, updateMealBtn, searchMealBtn;
     JButton addOfferBtn, employeeReportBtn, mealReportBtn;
-    JButton updateAdminInfoBtn; // ⭐ changed name
+    JButton updateAdminInfoBtn;
     JButton logoutBtn;
 
     JTextArea output;
@@ -56,7 +55,7 @@ public class AdminDashboard extends JFrame {
         employeeReportBtn.setBounds(150, 100, 120, 30);
         mealReportBtn.setBounds(280, 100, 120, 30);
 
-        // ================= UPDATE ADMIN INFO ⭐ =================
+        // ================= ADMIN INFO =================
         updateAdminInfoBtn = new JButton("Update Admin Info");
         updateAdminInfoBtn.setBounds(410, 100, 160, 30);
 
@@ -67,9 +66,7 @@ public class AdminDashboard extends JFrame {
         // ================= OUTPUT =================
         output = new JTextArea();
         output.setBounds(20, 150, 640, 350);
-        add(output);
 
-        // ================= ADD =================
         add(addEmpBtn);
         add(showEmpBtn);
         add(deleteEmpBtn);
@@ -85,26 +82,28 @@ public class AdminDashboard extends JFrame {
         add(employeeReportBtn);
         add(mealReportBtn);
 
-        add(updateAdminInfoBtn); // ⭐
+        add(updateAdminInfoBtn);
         add(logoutBtn);
+
+        add(output);
 
         // ================= EMPLOYEES =================
 
         addEmpBtn.addActionListener(e -> {
 
-            String name = JOptionPane.showInputDialog("Name:");
-            String username = JOptionPane.showInputDialog("Username:");
-            String password = JOptionPane.showInputDialog("Password:");
+            String name = InputValidator.getNameOnly(this, "Name:");
+            String username = InputValidator.getText(this, "Username:");
+            String password = InputValidator.getText(this, "Password:");
 
-            Employee emp = new Employee(
+            if (name == null || username == null || password == null) return;
+
+            DataStore.employees.add(new Employee(
                     DataStore.employees.size() + 1,
                     name, username, password
-            );
+            ));
 
-            DataStore.employees.add(emp);
             FileManager.saveAll();
-
-            JOptionPane.showMessageDialog(this, "Employee Added");
+            output.setText("✔ Employee Added");
         });
 
         showEmpBtn.addActionListener(e -> {
@@ -120,36 +119,46 @@ public class AdminDashboard extends JFrame {
 
         deleteEmpBtn.addActionListener(e -> {
 
-            int id = Integer.parseInt(JOptionPane.showInputDialog("ID:"));
-            DataStore.employees.removeIf(emp -> emp.id == id);
+            Integer id = InputValidator.getInt(this, "ID:");
+            if (id == null) return;
 
+            DataStore.employees.removeIf(emp -> emp.id == id);
             FileManager.saveAll();
 
-            JOptionPane.showMessageDialog(this, "Deleted");
+            output.setText("✔ Deleted");
         });
 
         updateEmpBtn.addActionListener(e -> {
 
-            int id = Integer.parseInt(JOptionPane.showInputDialog("ID:"));
+            Integer id = InputValidator.getInt(this, "ID:");
+            if (id == null) return;
 
             for (Employee emp : DataStore.employees) {
                 if (emp.id == id) {
 
-                    emp.name = JOptionPane.showInputDialog("New Name:");
-                    emp.username = JOptionPane.showInputDialog("New Username:");
-                    emp.password = JOptionPane.showInputDialog("New Password:");
+                    String name = InputValidator.getNameOnly(this, "New Name:");
+                    String username = InputValidator.getText(this, "New Username:");
+                    String password = InputValidator.getText(this, "New Password:");
+
+                    if (name == null || username == null || password == null) return;
+
+                    emp.name = name;
+                    emp.username = username;
+                    emp.password = password;
 
                     FileManager.saveAll();
-
-                    JOptionPane.showMessageDialog(this, "Updated");
+                    output.setText("✔ Updated");
                     return;
                 }
             }
+
+            output.setText("❌ Not Found");
         });
 
         searchEmpBtn.addActionListener(e -> {
 
-            int id = Integer.parseInt(JOptionPane.showInputDialog("Search ID:"));
+            Integer id = InputValidator.getInt(this, "Search ID:");
+            if (id == null) return;
 
             for (Employee emp : DataStore.employees) {
                 if (emp.id == id) {
@@ -158,21 +167,26 @@ public class AdminDashboard extends JFrame {
                 }
             }
 
-            output.setText("Not Found");
+            output.setText("❌ Not Found");
         });
 
         // ================= MEALS =================
 
         addMealBtn.addActionListener(e -> {
 
-            String name = JOptionPane.showInputDialog("Meal:");
-            double price = Double.parseDouble(JOptionPane.showInputDialog("Price:"));
+            String name = InputValidator.getText(this, "Meal:");
+            Double price = InputValidator.getDouble(this, "Price:");
 
-            DataStore.meals.add(new Meal(DataStore.meals.size() + 1, name, price));
+            if (name == null || price == null) return;
+
+            DataStore.meals.add(new Meal(
+                    DataStore.meals.size() + 1,
+                    name,
+                    price
+            ));
 
             FileManager.saveAll();
-
-            JOptionPane.showMessageDialog(this, "Meal Added");
+            output.setText("✔ Meal Added");
         });
 
         showMealBtn.addActionListener(e -> {
@@ -188,25 +202,33 @@ public class AdminDashboard extends JFrame {
 
         updateMealBtn.addActionListener(e -> {
 
-            int id = Integer.parseInt(JOptionPane.showInputDialog("ID:"));
+            Integer id = InputValidator.getInt(this, "ID:");
+            if (id == null) return;
 
             for (Meal m : DataStore.meals) {
                 if (m.id == id) {
 
-                    m.name = JOptionPane.showInputDialog("New Name:");
-                    m.price = Double.parseDouble(JOptionPane.showInputDialog("New Price:"));
+                    String name = InputValidator.getText(this, "New Name:");
+                    Double price = InputValidator.getDouble(this, "New Price:");
+
+                    if (name == null || price == null) return;
+
+                    m.name = name;
+                    m.price = price;
 
                     FileManager.saveAll();
-
-                    JOptionPane.showMessageDialog(this, "Updated");
+                    output.setText("✔ Updated");
                     return;
                 }
             }
+
+            output.setText("❌ Not Found");
         });
 
         searchMealBtn.addActionListener(e -> {
 
-            String name = JOptionPane.showInputDialog("Search Meal:");
+            String name = InputValidator.getText(this, "Search Meal:");
+            if (name == null) return;
 
             for (Meal m : DataStore.meals) {
                 if (m.name.equalsIgnoreCase(name)) {
@@ -215,14 +237,15 @@ public class AdminDashboard extends JFrame {
                 }
             }
 
-            output.setText("Not Found");
+            output.setText("❌ Not Found");
         });
 
         // ================= OFFERS =================
 
         addOfferBtn.addActionListener(e -> {
 
-            String offer = JOptionPane.showInputDialog("Offer:");
+            String offer = InputValidator.getText(this, "Offer:");
+            if (offer == null) return;
 
             DataStore.offers.add(offer);
 
@@ -231,8 +254,7 @@ public class AdminDashboard extends JFrame {
             }
 
             FileManager.saveAll();
-
-            JOptionPane.showMessageDialog(this, "Offer Added");
+            output.setText("✔ Offer Added");
         });
 
         // ================= REPORTS =================
@@ -259,30 +281,28 @@ public class AdminDashboard extends JFrame {
             output.setText(report);
         });
 
-        // ================= UPDATE ADMIN INFO ⭐ =================
+        // ================= ADMIN UPDATE =================
 
         updateAdminInfoBtn.addActionListener(e -> {
 
-            String newName = JOptionPane.showInputDialog("New Name:");
-            String newUsername = JOptionPane.showInputDialog("New Username:");
-            String newPassword = JOptionPane.showInputDialog("New Password:");
+            String name = InputValidator.getNameOnly(this, "New Name:");
+            String username = InputValidator.getText(this, "New Username:");
+            String password = InputValidator.getText(this, "New Password:");
 
-            if (newName == null || newUsername == null || newPassword == null) return;
+            if (name == null || username == null || password == null) return;
 
-            currentUser.name = newName;
-            currentUser.username = newUsername;
-            currentUser.password = newPassword;
+            currentUser.name = name;
+            currentUser.username = username;
+            currentUser.password = password;
 
-            JOptionPane.showMessageDialog(this, "Admin Info Updated ✔");
+            FileManager.saveAll();
+
+            output.setText("✔ Admin Updated");
         });
 
         // ================= LOGOUT =================
 
         logoutBtn.addActionListener(e -> {
-
-            JOptionPane.showMessageDialog(this,
-                    currentUser.name + " logged out successfully");
-
             new LoginScreen().setVisible(true);
             this.dispose();
         });
