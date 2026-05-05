@@ -6,8 +6,7 @@
 /**
  *
  * @author tarek
- */
-import java.util.ArrayList;
+ */import java.util.ArrayList;
 
 public class Order {
 
@@ -25,11 +24,15 @@ public class Order {
 
     public void calculateTotal() {
         totalPrice = 0;
+
         for (Meal m : meals) {
             totalPrice += m.price;
         }
 
-        // 🔥 مهم جدًا: تسجيل الدفع في العميل
+        // 🔥 تسجيل الدفع
         customer.addPayment(totalPrice);
+
+        // 🔥 مهم جدًا: حفظ الأوردر داخل البروفايل
+        customer.addOrder(this);
     }
 }

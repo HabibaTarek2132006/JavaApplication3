@@ -10,6 +10,7 @@ public class EmployeeDashboard extends JFrame {
     JButton billingBtn;
     JButton logoutBtn;
     JButton updateInfoBtn;
+    JButton profileBtn; // ⭐ NEW
 
     JTextArea output;
 
@@ -48,6 +49,10 @@ public class EmployeeDashboard extends JFrame {
         logoutBtn = new JButton("Logout");
         logoutBtn.setBounds(340, 100, 150, 30);
 
+        // ⭐ NEW BUTTON
+        profileBtn = new JButton("Customer Profile");
+        profileBtn.setBounds(500, 100, 150, 30);
+
         output = new JTextArea();
         output.setBounds(20, 150, 590, 280);
 
@@ -60,6 +65,7 @@ public class EmployeeDashboard extends JFrame {
         add(billingBtn);
         add(updateInfoBtn);
         add(logoutBtn);
+        add(profileBtn); // ⭐ NEW
         add(output);
 
         // ================= CUSTOMER =================
@@ -202,7 +208,41 @@ public class EmployeeDashboard extends JFrame {
                             "\nGifts = " + customer.gifts);
         });
 
-        // ================= UPDATE INFO (FIXED) =================
+        // ================= CUSTOMER PROFILE ⭐ NEW =================
+
+        profileBtn.addActionListener(e -> {
+
+            int id = Integer.parseInt(
+                    JOptionPane.showInputDialog("Enter Customer ID")
+            );
+
+            Customer customer = null;
+
+            for (Customer c : DataStore.customers) {
+                if (c.id == id) {
+                    customer = c;
+                    break;
+                }
+            }
+
+            if (customer == null) {
+                output.setText("Customer Not Found");
+                return;
+            }
+
+            output.setText(
+                    "=== CUSTOMER PROFILE ===\n" +
+                    "Name: " + customer.name + "\n" +
+                    "ID: " + customer.id + "\n\n" +
+                    "Payments: " + customer.totalPayments + "\n" +
+                    "Points: " + customer.loyaltyPoints + "\n\n" +
+                    "Orders: " + customer.orders + "\n" +
+                    "Gifts: " + customer.gifts + "\n" +
+                    "Offers: " + customer.offers + "\n"
+            );
+        });
+
+        // ================= UPDATE INFO =================
 
         updateInfoBtn.addActionListener(e -> {
 
@@ -214,12 +254,10 @@ public class EmployeeDashboard extends JFrame {
                 return;
             }
 
-            // 1) update current session
             currentUser.name = newName;
             currentUser.username = newUsername;
             currentUser.password = newPassword;
 
-            // 2) IMPORTANT: update real DataStore (fix login problem)
             for (Employee emp : DataStore.employees) {
                 if (emp.id == currentUser.id) {
                     emp.name = newName;

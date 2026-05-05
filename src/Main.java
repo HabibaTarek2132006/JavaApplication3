@@ -2,19 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 public class Main {
 
     public static void main(String[] args) {
 
         // =========================
-        // LOAD DATA FROM FILES
+        // 1. LOAD DATA FROM FILES
         // =========================
         FileManager.loadAll();
 
         // =========================
-        // INITIAL DATA (FIRST RUN ONLY)
+        // 2. INITIAL DATA (ONLY FIRST TIME)
         // =========================
+
+        // Employees
         if (DataStore.employees.isEmpty()) {
 
             DataStore.employees.add(new Employee(1, "Habiba", "emp1", "1111"));
@@ -24,9 +25,9 @@ public class Main {
             DataStore.employees.add(new Employee(5, "Shahd", "emp5", "5555"));
             DataStore.employees.add(new Employee(6, "Ali", "emp6", "6666"));
 
-            FileManager.saveAll(); // 👈 مهم جدًا نحفظ أول مرة
         }
 
+        // Meals
         if (DataStore.meals.isEmpty()) {
 
             DataStore.meals.add(new Meal(1, "Pizza", 30));
@@ -36,11 +37,13 @@ public class Main {
             DataStore.meals.add(new Meal(5, "Chicken", 300));
             DataStore.meals.add(new Meal(6, "Steak", 500));
 
-            FileManager.saveAll(); // 👈 مهم برضو
         }
 
+        // 💾 Save once after initial data only
+        FileManager.saveAll();
+
         // =========================
-        // START SYSTEM (GUI)
+        // 3. START SYSTEM (GUI)
         // =========================
         new LoginScreen().setVisible(true);
     }

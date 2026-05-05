@@ -8,6 +8,7 @@ public class AdminDashboard extends JFrame {
     JButton addEmpBtn, showEmpBtn, deleteEmpBtn, updateEmpBtn, searchEmpBtn;
     JButton addMealBtn, showMealBtn, updateMealBtn, searchMealBtn;
     JButton addOfferBtn, employeeReportBtn, mealReportBtn;
+    JButton updateAdminInfoBtn; // ⭐ changed name
     JButton logoutBtn;
 
     JTextArea output;
@@ -17,7 +18,7 @@ public class AdminDashboard extends JFrame {
         this.currentUser = user;
 
         setTitle("Admin Dashboard");
-        setSize(700, 500);
+        setSize(700, 550);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -55,13 +56,17 @@ public class AdminDashboard extends JFrame {
         employeeReportBtn.setBounds(150, 100, 120, 30);
         mealReportBtn.setBounds(280, 100, 120, 30);
 
+        // ================= UPDATE ADMIN INFO ⭐ =================
+        updateAdminInfoBtn = new JButton("Update Admin Info");
+        updateAdminInfoBtn.setBounds(410, 100, 160, 30);
+
         // ================= LOGOUT =================
         logoutBtn = new JButton("Logout");
         logoutBtn.setBounds(540, 100, 120, 30);
 
         // ================= OUTPUT =================
         output = new JTextArea();
-        output.setBounds(20, 150, 640, 300);
+        output.setBounds(20, 150, 640, 350);
         add(output);
 
         // ================= ADD =================
@@ -79,6 +84,8 @@ public class AdminDashboard extends JFrame {
         add(addOfferBtn);
         add(employeeReportBtn);
         add(mealReportBtn);
+
+        add(updateAdminInfoBtn); // ⭐
         add(logoutBtn);
 
         // ================= EMPLOYEES =================
@@ -250,6 +257,23 @@ public class AdminDashboard extends JFrame {
             }
 
             output.setText(report);
+        });
+
+        // ================= UPDATE ADMIN INFO ⭐ =================
+
+        updateAdminInfoBtn.addActionListener(e -> {
+
+            String newName = JOptionPane.showInputDialog("New Name:");
+            String newUsername = JOptionPane.showInputDialog("New Username:");
+            String newPassword = JOptionPane.showInputDialog("New Password:");
+
+            if (newName == null || newUsername == null || newPassword == null) return;
+
+            currentUser.name = newName;
+            currentUser.username = newUsername;
+            currentUser.password = newPassword;
+
+            JOptionPane.showMessageDialog(this, "Admin Info Updated ✔");
         });
 
         // ================= LOGOUT =================
