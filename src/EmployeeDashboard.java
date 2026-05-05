@@ -202,7 +202,7 @@ public class EmployeeDashboard extends JFrame {
                             "\nGifts = " + customer.gifts);
         });
 
-        // ================= UPDATE INFO =================
+        // ================= UPDATE INFO (FIXED) =================
 
         updateInfoBtn.addActionListener(e -> {
 
@@ -214,9 +214,20 @@ public class EmployeeDashboard extends JFrame {
                 return;
             }
 
+            // 1) update current session
             currentUser.name = newName;
             currentUser.username = newUsername;
             currentUser.password = newPassword;
+
+            // 2) IMPORTANT: update real DataStore (fix login problem)
+            for (Employee emp : DataStore.employees) {
+                if (emp.id == currentUser.id) {
+                    emp.name = newName;
+                    emp.username = newUsername;
+                    emp.password = newPassword;
+                    break;
+                }
+            }
 
             FileManager.saveAll();
 

@@ -4,3 +4,4 @@
 4,Pasta,200.0
 5,Chicken,300.0
 6,Steak,500.0
+7,btataaaaa,60.0
