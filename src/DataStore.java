@@ -1,12 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author tarek
- */
 import java.util.ArrayList;
 
 public class DataStore {
@@ -16,5 +7,8 @@ public class DataStore {
     public static ArrayList<Meal> meals = new ArrayList<>();
     public static ArrayList<Order> orders = new ArrayList<>();
 
-    public static ArrayList<String> offers = new ArrayList<>(); // ✅ لازم تضيفي دي
+    public static ArrayList<String> offers = new ArrayList<>();
+
+    // ================= ADMIN =================
+    public static User admin = new User(0, "Admin", "admin", "1234", Role.ADMIN);
 }

@@ -1,12 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author LOQ
- */
 import java.io.*;
 import java.util.*;
 
@@ -18,6 +9,7 @@ public class FileManager {
         saveMeals();
         saveCustomers();
         saveOrders();
+        saveAdmin();
     }
 
     // ================= LOAD ALL =================
@@ -26,6 +18,7 @@ public class FileManager {
         loadMeals();
         loadCustomers();
         loadOrders();
+        loadAdmin();
     }
 
     // ================= EMPLOYEES =================
@@ -168,6 +161,44 @@ public class FileManager {
 
         } catch (Exception e) {
             System.out.println("No orders file found");
+        }
+    }
+
+    // ================= ADMIN =================
+    private static void saveAdmin() {
+        try (PrintWriter pw = new PrintWriter("admin.txt")) {
+            if (DataStore.admin != null) {
+                pw.println(
+                        DataStore.admin.id + "," +
+                        DataStore.admin.name + "," +
+                        DataStore.admin.username + "," +
+                        DataStore.admin.password
+                );
+            }
+        } catch (Exception e) {
+            System.out.println("Error saving admin");
+        }
+    }
+
+    private static void loadAdmin() {
+        try (Scanner sc = new Scanner(new File("admin.txt"))) {
+
+            if (sc.hasNextLine()) {
+                String[] parts = sc.nextLine().split(",");
+
+                DataStore.admin = new User(
+                        Integer.parseInt(parts[0]),
+                        parts[1],
+                        parts[2],
+                        parts[3],
+                        Role.ADMIN
+                );
+            }
+
+        } catch (Exception e) {
+            System.out.println("No admin file found");
+
+            DataStore.admin = new User(0, "Admin", "admin", "1234", Role.ADMIN);
         }
     }
 }
