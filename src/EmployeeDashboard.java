@@ -156,7 +156,7 @@ public class EmployeeDashboard extends JFrame {
 
             Order order = new Order(customer);
             order.meals.add(selectedMeal);
-            order.calculateTotal();
+            order.checkout();
 
             DataStore.orders.add(order);
             FileManager.saveAll();
@@ -164,17 +164,7 @@ public class EmployeeDashboard extends JFrame {
             output.setText("✔ Order Created | Total: " + order.totalPrice);
         });
 
-        // ================= CANCEL =================
-        cancelOrderBtn.addActionListener(e -> {
-
-            Integer id = InputValidator.getInt(this, "Order ID:");
-            if (id == null) return;
-
-            DataStore.orders.removeIf(o -> o.id == id);
-            FileManager.saveAll();
-
-            output.setText("✔ Order Cancelled");
-        });
+       
 
         // ================= SHOW ORDERS =================
         showOrdersBtn.addActionListener(e -> {
@@ -232,7 +222,7 @@ public class EmployeeDashboard extends JFrame {
                             "ID: " + c.id + "\n\n" +
                             "Payments: " + c.totalPayments + "\n" +
                             "Points: " + c.loyaltyPoints + "\n\n" +
-                            "Orders: " + c.orders + "\n" +
+                            "Orders:\n" + c.getOrdersInfo()+ "\n" +
                             "Gifts: " + c.gifts + "\n" +
                             "Offers: " + c.offers + "\n"
                     );
@@ -269,6 +259,68 @@ public class EmployeeDashboard extends JFrame {
 
             output.setText("✔ Updated Successfully");
         });
+        // ================= Cancel =================
+        cancelOrderBtn.addActionListener(e -> {
+       
+
+    try {
+        // 1️⃣ يدخل Customer ID
+        int custId = Integer.parseInt(
+            JOptionPane.showInputDialog("Enter Customer ID")
+        );
+
+        // 2️⃣ نجيب العميل
+        Customer customer = null;
+
+        for (Customer c : DataStore.customers) {
+            if (c.id == custId) {
+                customer = c;
+                break;
+            }
+        }
+
+        if (customer == null) {
+            JOptionPane.showMessageDialog(this, "Customer not found");
+            return;
+        }
+
+        // 3️⃣ عرض Orders
+        String ordersInfo = customer.getOrdersInfo();
+
+        if (ordersInfo == null || ordersInfo.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No orders found");
+            return;
+        }
+
+        // 4️⃣ عرضهم
+        JOptionPane.showMessageDialog(this, ordersInfo);
+
+        // 5️⃣ يدخل Order ID
+        int orderId = Integer.parseInt(
+            JOptionPane.showInputDialog("Enter Order ID to cancel")
+        );
+
+        // 6️⃣ حذف
+        boolean removed = customer.cancelOrder(orderId);
+
+if (removed) {
+    DataStore.orders.removeIf(o -> o.id == orderId);
+    FileManager.saveAll();
+
+    JOptionPane.showMessageDialog(this, "✔ Order cancelled successfully");
+} else {
+    JOptionPane.showMessageDialog(this, "❌ Order not found");
+}
+
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Invalid input");
+    }
+});
+        
+        
+        
+        
+        
 
         // ================= LOGOUT =================
         logoutBtn.addActionListener(e -> {

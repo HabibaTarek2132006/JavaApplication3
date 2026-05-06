@@ -7,6 +7,7 @@
  *
  * @author tarek
  */
+
 import java.util.ArrayList;
 
 public class Customer extends Person {
@@ -63,21 +64,20 @@ public class Customer extends Person {
     // ================= GIFTS LOGIC (CLEAN) =================
     private void checkGifts() {
 
-        if (totalPayments >= 200 && !gifts.contains("Free Drink 🥤")) {
-            gifts.add("Free Drink 🥤");
-            addNotification("🥤 Free Drink earned");
-        }
+    gifts.clear(); // 🔥 مهم جدًا
 
-        if (totalPayments >= 500 && !gifts.contains("Free Dessert 🍰")) {
-            gifts.add("Free Dessert 🍰");
-            addNotification("🍰 Free Dessert earned");
-        }
-
-        if (totalPayments >= 800 && !gifts.contains("Free Meal 🍔")) {
-            gifts.add("Free Meal 🍔");
-            addNotification("🍔 Free Meal earned");
-        }
+    if (totalPayments >= 200) {
+        gifts.add("Free Drink 🥤");
     }
+
+    if (totalPayments >= 500) {
+        gifts.add("Free Dessert 🍰");
+    }
+
+    if (totalPayments >= 800) {
+        gifts.add("Free Meal 🍔");
+    }
+}
 
     // ================= OFFERS =================
     public void addOffer(String offer) {
@@ -90,4 +90,43 @@ public class Customer extends Person {
         notifications.add(msg);
         System.out.println("[" + name + "] " + msg);
     }
+    // ================= cancel =================
+    
+  public boolean cancelOrder(int orderId) {
+
+    for (int i = 0; i < orders.size(); i++) {
+
+        Order o = orders.get(i);
+
+        if (o.id == orderId) {
+
+            totalPayments -= o.totalPrice;
+            if (totalPayments < 0) totalPayments = 0;
+
+            loyaltyPoints -= (int)(o.totalPrice / 10);
+            if (loyaltyPoints < 0) loyaltyPoints = 0;
+
+            orders.remove(i);
+
+            checkGifts(); // 🔥 مهم
+
+            addNotification("Order " + orderId + " cancelled");
+
+            return true;
+        }
+    }
+
+    return false;
+}
+  
+     public String getOrdersInfo() {
+
+    String data = "";
+
+    for (Order o : orders) {
+        data += "Order ID: " + o.id + " | Total: " + o.totalPrice + "\n";
+    }
+
+    return data;
+}
 }
