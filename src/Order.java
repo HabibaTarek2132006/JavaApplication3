@@ -18,29 +18,25 @@ public class Order {
     public double totalPrice;
 
     public Order(Customer customer) {
-        this.id = generateId(); // 👈 هنا بيستخدمها
-        this.customer = customer;
-    }
-
-    // 🔥 الميثود لازم تكون جوه الكلاس
-    private int generateId() {
-
-    boolean[] used = new boolean[1000]; // حجم كفاية
-
-    for (Order o : DataStore.orders) {
-        if (o.id < used.length) {
-            used[o.id] = true;
-        }
-    }
-
-    for (int i = 1; i < used.length; i++) {
-        if (!used[i]) {
-            return i;
-        }
-    }
-
-    return used.length; // fallback
+    this.customer = customer;
+    this.id = generateCustomerOrderId(customer);
+    
+    
 }
+    private int generateCustomerOrderId(Customer customer) {
+
+    int id = 1;
+
+    for (Order o : customer.orders) {
+        if (o.id >= id) {
+            id = o.id + 1;
+        }
+    }
+
+    return id;
+}
+    // 🔥 الميثود لازم تكون جوه الكلاس
+   
 
     public void calculateTotal() {
         totalPrice = 0;

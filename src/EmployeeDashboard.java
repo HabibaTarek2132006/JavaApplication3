@@ -173,8 +173,9 @@ public class EmployeeDashboard extends JFrame {
 
             for (Order o : DataStore.orders) {
                 data += "Order " + o.id +
-                        " | Customer: " + o.customer.name +
-                        " | Total: " + o.totalPrice + "\n";
+        " | Customer: " + o.customer.name +
+        " (ID: " + o.customer.id + ")" +
+        " | Total: " + o.totalPrice + "\n";
             }
 
             output.setText(data);
