@@ -3,15 +3,22 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/Order.java</file>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/Person.java</file>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/Customer.java</file>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/Meal.java</file>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/EmployeeDashboard.java</file>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/AdminDashboard.java</file>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/DataStore.java</file>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/FileManager.java</file>
-            <file>file:/C:/Users/user/OneDrive/kn/Documents/GitHub/JavaApplication3/src/Main.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/javaapplication3/JavaApplication3.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/Role.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/Person.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/User.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/DataStore.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/Employee.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/Customer.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/Meal.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/Notification.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/AuthService.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/LoginScreen.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/AdminDashboard.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/EmployeeDashboard.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/CustomerScreen.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/Main.java</file>
+            <file>file:/C:/tarek/Documents/NetBeansProjects/JavaApplication3/src/Order.java</file>
         </group>
     </open-files>
 </project-private>
