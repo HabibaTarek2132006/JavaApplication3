@@ -48,7 +48,7 @@ public class Customer extends Person {
         orders.add(order);
 
         // ✔ مهم: الحساب يتم مرة واحدة فقط هنا
-        addPayment(order.totalPrice);
+        
     }
 
     // ================= PAYMENTS =================
