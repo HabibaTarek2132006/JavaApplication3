@@ -4,7 +4,7 @@ public class EmployeeDashboard extends JFrame {
 
     User currentUser;
 
-    JButton addCustomerBtn, showCustomerBtn, searchCustomerBtn;
+   JButton addCustomerBtn, showCustomerBtn, searchCustomerBtn, deleteCustomerBtn;
     JButton makeOrderBtn, cancelOrderBtn, showOrdersBtn;
     JButton billingBtn;
     JButton logoutBtn;
@@ -18,7 +18,7 @@ public class EmployeeDashboard extends JFrame {
         this.currentUser = user;
 
         setTitle("Employee Dashboard");
-        setSize(650, 500);
+        setSize(730, 500);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -26,37 +26,43 @@ public class EmployeeDashboard extends JFrame {
         addCustomerBtn = new JButton("Add Customer");
         showCustomerBtn = new JButton("Show Customers");
         searchCustomerBtn = new JButton("Search Customer");
+        deleteCustomerBtn = new JButton("Delete Customer");
 
-        addCustomerBtn.setBounds(20, 20, 150, 30);
-        showCustomerBtn.setBounds(180, 20, 150, 30);
-        searchCustomerBtn.setBounds(340, 20, 150, 30);
+        addCustomerBtn.setBounds(20, 20, 160, 35);
+
+         showCustomerBtn.setBounds(190, 20, 160, 35);
+
+       searchCustomerBtn.setBounds(360, 20, 160, 35);
+
+        deleteCustomerBtn.setBounds(530, 20, 160, 35);
 
         makeOrderBtn = new JButton("Make Order");
         cancelOrderBtn = new JButton("Cancel Order");
         showOrdersBtn = new JButton("Show Orders");
+         billingBtn = new JButton("Billing");
 
-        makeOrderBtn.setBounds(20, 60, 150, 30);
-        cancelOrderBtn.setBounds(180, 60, 150, 30);
-        showOrdersBtn.setBounds(340, 60, 150, 30);
-
-        billingBtn = new JButton("Billing");
-        billingBtn.setBounds(20, 100, 150, 30);
+        makeOrderBtn.setBounds(20, 70, 160, 35);
+        cancelOrderBtn.setBounds(190, 70, 160, 35);
+        showOrdersBtn.setBounds(360, 70, 160, 35);
+        billingBtn.setBounds(530, 70, 160, 35);
+        
+        
 
         updateInfoBtn = new JButton("Update Info");
-        updateInfoBtn.setBounds(180, 100, 150, 30);
-
         logoutBtn = new JButton("Logout");
-        logoutBtn.setBounds(340, 100, 150, 30);
-
         profileBtn = new JButton("Customer Profile");
-        profileBtn.setBounds(500, 100, 150, 30);
+        profileBtn.setBounds(20, 120, 160, 35);
+        updateInfoBtn.setBounds(190, 120, 160, 35);
+        logoutBtn.setBounds(360, 120, 160, 35);
+        
 
         output = new JTextArea();
-        output.setBounds(20, 150, 590, 280);
+        output.setBounds(20, 180, 670, 250);
 
         add(addCustomerBtn);
         add(showCustomerBtn);
         add(searchCustomerBtn);
+        add(deleteCustomerBtn);
         add(makeOrderBtn);
         add(cancelOrderBtn);
         add(showOrdersBtn);
@@ -108,6 +114,41 @@ public class EmployeeDashboard extends JFrame {
 
             output.setText("❌ Not Found");
         });
+        
+        
+        // ================= DELETE CUSTOMER =================
+deleteCustomerBtn.addActionListener(e -> {
+
+    Integer id = InputValidator.getInt(this, "Enter Customer ID:");
+
+    if (id == null) return;
+
+    Customer customer = null;
+
+    for (Customer c : DataStore.customers) {
+
+        if (c.id == id) {
+            customer = c;
+            break;
+        }
+    }
+
+    if (customer == null) {
+
+        output.setText("❌ Customer Not Found");
+        return;
+    }
+
+    // 🔥 حذف كل أوردرات العميل
+    DataStore.orders.removeIf(o -> o.customer.id == id);
+
+    // 🔥 حذف العميل
+    DataStore.customers.remove(customer);
+
+    FileManager.saveAll();
+
+    output.setText("✔ Customer Deleted");
+});
 
         // ================= MAKE ORDER =================
         makeOrderBtn.addActionListener(e -> {
