@@ -7,7 +7,7 @@ public class AdminDashboard extends JFrame {
  
     JButton addEmpBtn, showEmpBtn, deleteEmpBtn, updateEmpBtn, searchEmpBtn;
     JButton addMealBtn, showMealBtn, updateMealBtn, searchMealBtn;
-    JButton addOfferBtn, employeeReportBtn, mealReportBtn;
+    JButton addOfferBtn, employeeReportBtn, mealReportBtn; JButton deleteMealBtn, customerReportBtn;
     JButton updateAdminInfoBtn;
     JButton logoutBtn;
  
@@ -59,11 +59,15 @@ public class AdminDashboard extends JFrame {
         showMealBtn   = new JButton("Show Meals");
         updateMealBtn = new JButton("Update Meal");
         searchMealBtn = new JButton("Search Meal");
+        deleteMealBtn = new JButton("Delete Meal");
+         customerReportBtn = new JButton("Customer Report");
  
         addMealBtn.setBounds(20, 80, 120, 30);
         showMealBtn.setBounds(150, 80, 120, 30);
         updateMealBtn.setBounds(280, 80, 120, 30);
         searchMealBtn.setBounds(410, 80, 120, 30);
+        deleteMealBtn.setBounds(540, 80, 120, 30);
+        customerReportBtn.setBounds(440, 120, 120, 30);
  
         // ================= OFFERS / REPORTS =================
         addOfferBtn       = new JButton("Add Offer");
@@ -111,6 +115,8 @@ public class AdminDashboard extends JFrame {
         styleButton(showMealBtn);
         styleButton(updateMealBtn);
         styleButton(searchMealBtn);
+        styleButton(deleteMealBtn);
+        styleButton(customerReportBtn);
  
         styleButton(addOfferBtn);
         styleButton(employeeReportBtn);
@@ -135,6 +141,8 @@ public class AdminDashboard extends JFrame {
         add(showMealBtn);
         add(updateMealBtn);
         add(searchMealBtn);
+        add(deleteMealBtn);
+        add(customerReportBtn);
  
         add(addOfferBtn);
         add(employeeReportBtn);
@@ -269,6 +277,16 @@ public class AdminDashboard extends JFrame {
             }
             output.setText("❌ Not Found");
         });
+        deleteMealBtn.addActionListener(e -> {
+
+    Integer id = InputValidator.getInt(this, "Meal ID:");
+    if (id == null) return;
+
+    DataStore.meals.removeIf(m -> m.id == id);
+    FileManager.saveAll();
+
+    output.setText("✔ Meal Deleted");
+});
  
         searchMealBtn.addActionListener(e -> {
             String name = InputValidator.getText(this, "Search Meal:");
@@ -308,6 +326,18 @@ public class AdminDashboard extends JFrame {
             }
             output.setText(report);
         });
+        customerReportBtn.addActionListener(e -> {
+
+    String report = "Customers Report:\n";
+
+    for (Customer c : DataStore.customers) {
+        report += c.id + " - " + c.name +
+                " | Payments: " + c.totalPayments +
+                " | Points: " + c.loyaltyPoints + "\n";
+    }
+
+    output.setText(report);
+});
  
         mealReportBtn.addActionListener(e -> {
             String report = "Meals Report:\n";
