@@ -84,8 +84,24 @@ public class FileManager {
     private static void saveCustomers() {
         try (PrintWriter pw = new PrintWriter("customers.txt")) {
             for (Customer c : DataStore.customers) {
-                pw.println(c.id + "," + c.name + "," +
-                        c.totalPayments + "," + c.loyaltyPoints);
+
+                String giftsStr = "";
+                for (String g : c.gifts) giftsStr += g + "|";
+
+                String offersStr = "";
+                for (String o : c.offers) offersStr += o + "|";
+
+                pw.println(
+                    c.id + "," +
+                    c.name + "," +
+                    c.totalPayments + "," +
+                    c.loyaltyPoints + "," +
+                    c.marketingProgram + "," +
+                    c.loyaltyProgram + "," +
+                    c.rewardProgram + "," +
+                    giftsStr + "," +
+                    offersStr
+                );
             }
         } catch (Exception e) {
             System.out.println("Error saving customers");
@@ -97,13 +113,33 @@ public class FileManager {
             DataStore.customers.clear();
 
             while (sc.hasNextLine()) {
-                String[] parts = sc.nextLine().split(",");
+                String[] parts = sc.nextLine().split(",", -1);
+
                 Customer c = new Customer(
-                        Integer.parseInt(parts[0]),
-                        parts[1]
+                    Integer.parseInt(parts[0]),
+                    parts[1]
                 );
-                c.totalPayments = Double.parseDouble(parts[2]);
-                c.loyaltyPoints = Integer.parseInt(parts[3]);
+                c.totalPayments    = Double.parseDouble(parts[2]);
+                c.loyaltyPoints    = Integer.parseInt(parts[3]);
+                c.marketingProgram = Boolean.parseBoolean(parts[4]);
+                c.loyaltyProgram   = Boolean.parseBoolean(parts[5]);
+                c.rewardProgram    = Boolean.parseBoolean(parts[6]);
+
+                // gifts
+                if (!parts[7].isEmpty()) {
+                    String[] gifts = parts[7].split("\\|");
+                    for (String g : gifts) {
+                        if (!g.isEmpty()) c.gifts.add(g);
+                    }
+                }
+
+                // offers
+                if (!parts[8].isEmpty()) {
+                    String[] offers = parts[8].split("\\|");
+                    for (String o : offers) {
+                        if (!o.isEmpty()) c.offers.add(o);
+                    }
+                }
 
                 DataStore.customers.add(c);
             }
@@ -115,7 +151,6 @@ public class FileManager {
     // ================= ORDERS =================
     private static void saveOrders() {
         try (PrintWriter pw = new PrintWriter("orders.txt")) {
-
             for (Order o : DataStore.orders) {
 
                 String mealsIds = "";
@@ -125,7 +160,6 @@ public class FileManager {
 
                 pw.println(o.id + "," + o.customer.id + "," + o.totalPrice + "," + mealsIds);
             }
-
         } catch (Exception e) {
             System.out.println("Error saving orders");
         }
@@ -133,16 +167,14 @@ public class FileManager {
 
     private static void loadOrders() {
         try (Scanner sc = new Scanner(new File("orders.txt"))) {
-
             DataStore.orders.clear();
 
             while (sc.hasNextLine()) {
-
                 String[] parts = sc.nextLine().split(",");
 
-                int orderId = Integer.parseInt(parts[0]);
+                int orderId    = Integer.parseInt(parts[0]);
                 int customerId = Integer.parseInt(parts[1]);
-                double total = Double.parseDouble(parts[2]);
+                double total   = Double.parseDouble(parts[2]);
 
                 Customer customer = null;
                 for (Customer c : DataStore.customers) {
@@ -152,13 +184,15 @@ public class FileManager {
                     }
                 }
 
+                if (customer == null) continue;
+
                 Order o = new Order(customer);
                 o.id = orderId;
                 o.totalPrice = total;
 
                 DataStore.orders.add(o);
+                customer.orders.add(o); // ✅ ده كان ناقص!
             }
-
         } catch (Exception e) {
             System.out.println("No orders file found");
         }
@@ -182,7 +216,6 @@ public class FileManager {
 
     private static void loadAdmin() {
         try (Scanner sc = new Scanner(new File("admin.txt"))) {
-
             if (sc.hasNextLine()) {
                 String[] parts = sc.nextLine().split(",");
 
@@ -194,10 +227,8 @@ public class FileManager {
                         Role.ADMIN
                 );
             }
-
         } catch (Exception e) {
             System.out.println("No admin file found");
-
             DataStore.admin = new User(0, "Admin", "admin", "1234", Role.ADMIN);
         }
     }
