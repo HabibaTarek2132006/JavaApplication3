@@ -1,1 +1,2 @@
-1,habiba,100.0,10,true,true,false,,Marketing Member - 10% Discount 🏷|Reward Member - Double Points 🌟|jkhl|
+1,habiba,300.0,30,true,true,true,300.0,0.0,30,0,Free Drink 🥤|,🎁 Reward: pizza|
+2,suz,337.5,63,true,true,true,450.0,112.5,33,30,Free Drink 🥤|,🎁 Reward: pizza|

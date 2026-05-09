@@ -7,8 +7,17 @@ public class Customer extends Person {
     ArrayList<Order>  orders        = new ArrayList<>();
     ArrayList<String> notifications = new ArrayList<>();
 
-    double  totalPayments    = 0;
-    int     loyaltyPoints    = 0;
+    double totalPayments    = 0;
+    int    loyaltyPoints    = 0;
+
+    // ✅ لتتبع قبل/بعد الخصم
+    double totalOriginalPayments = 0; // مجموع الأسعار قبل الخصم
+    double totalSaved            = 0; // مجموع ما وفّره الكاستمر
+
+    // ✅ لتتبع قبل/بعد البونص
+    int basePoints  = 0; // البوينتس الأصلية بدون بونص
+    int bonusPoints = 0; // البوينتس الإضافية من Loyalty
+
     boolean marketingProgram = false;
     boolean loyaltyProgram   = false;
     boolean rewardProgram    = false;
@@ -20,20 +29,30 @@ public class Customer extends Person {
     // ================= REGISTER PROGRAMS =================
 
     public void registerMarketing() {
+        if (DataStore.marketingDiscount <= 0) {
+            addNotification("Marketing Program is not active yet");
+            return;
+        }
         marketingProgram = true;
-        addOffer("Marketing Member - 10% Discount 🏷");  // ✅ offer تلقائي
-        addNotification(name + " joined Marketing Program");
+        addNotification(name + " joined Marketing Program - " + (int)DataStore.marketingDiscount + "% Discount");
     }
 
     public void registerLoyalty() {
+        if (DataStore.loyaltyBonusPoints <= 0) {
+            addNotification("Loyalty Program is not active yet");
+            return;
+        }
         loyaltyProgram = true;
-        addOffer("Reward Member - Double Points 🌟");  // ✅ offer تلقائي
-        addNotification(name + " joined Loyalty Program");
+        addNotification(name + " joined Loyalty Program - +" + DataStore.loyaltyBonusPoints + " Bonus Points per order");
     }
 
     public void registerReward() {
+        if (DataStore.rewardReward.isEmpty()) {
+            addNotification("Reward Program is not active yet");
+            return;
+        }
         rewardProgram = true;
-        addOffer("Loyalty Member - Free Appetizer 🍟");    // ✅ offer تلقائي
+        addOffer("🎁 Reward: " + DataStore.rewardReward);
         addNotification(name + " joined Reward Program");
     }
 
@@ -41,14 +60,26 @@ public class Customer extends Person {
 
     public void addOrder(Order order) {
         orders.add(order);
-        addPayment(order.totalPrice);
     }
 
     // ================= PAYMENTS =================
+    // ✅ بياخد السعر بعد الخصم + السعر الأصلي
+    public void addPayment(double amount, double original) {
+        totalPayments         += amount;
+        totalOriginalPayments += original;
+        totalSaved            += (original - amount);
 
-    public void addPayment(double amount) {
-        totalPayments += amount;
-        loyaltyPoints += (int)(amount / 10);
+        // ✅ البوينتس الأصلية على السعر الفعلي المدفوع
+        int earned = (int)(amount / 10);
+        basePoints    += earned;
+        loyaltyPoints += earned;
+
+        // ✅ لو مشترك في Loyalty بيتضاف بونص إضافي
+        if (loyaltyProgram && DataStore.loyaltyBonusPoints > 0) {
+            bonusPoints   += DataStore.loyaltyBonusPoints;
+            loyaltyPoints += DataStore.loyaltyBonusPoints;
+        }
+
         checkGifts();
     }
 
@@ -81,10 +112,28 @@ public class Customer extends Person {
         for (int i = 0; i < orders.size(); i++) {
             Order o = orders.get(i);
             if (o.id == orderId) {
-                totalPayments -= o.totalPrice;
-                if (totalPayments < 0) totalPayments = 0;
-                loyaltyPoints -= (int)(o.totalPrice / 10);
+                // ✅ نرجع الحسابات صح
+                totalPayments         -= o.totalPrice;
+                totalOriginalPayments -= o.originalPrice;
+                totalSaved            -= o.discountAmount;
+                if (totalPayments         < 0) totalPayments         = 0;
+                if (totalOriginalPayments < 0) totalOriginalPayments = 0;
+                if (totalSaved            < 0) totalSaved            = 0;
+
+                int earned = (int)(o.totalPrice / 10);
+                basePoints    -= earned;
+                loyaltyPoints -= earned;
+                if (basePoints    < 0) basePoints    = 0;
                 if (loyaltyPoints < 0) loyaltyPoints = 0;
+
+                // ✅ لو كان فيه بونص Loyalty نرجعه
+                if (loyaltyProgram && DataStore.loyaltyBonusPoints > 0) {
+                    bonusPoints   -= DataStore.loyaltyBonusPoints;
+                    loyaltyPoints -= DataStore.loyaltyBonusPoints;
+                    if (bonusPoints   < 0) bonusPoints   = 0;
+                    if (loyaltyPoints < 0) loyaltyPoints = 0;
+                }
+
                 orders.remove(i);
                 checkGifts();
                 addNotification("Order " + orderId + " cancelled");
@@ -99,7 +148,14 @@ public class Customer extends Person {
     public String getOrdersInfo() {
         String data = "";
         for (Order o : orders) {
-            data += "Order ID: " + o.id + " | Total: " + o.totalPrice + "\n";
+            if (o.discountAmount > 0) {
+                data += "Order ID: " + o.id +
+                        " | Before: " + o.originalPrice +
+                        " | Discount: " + (int)DataStore.marketingDiscount + "%" +
+                        " | After: "  + o.totalPrice + "\n";
+            } else {
+                data += "Order ID: " + o.id + " | Total: " + o.totalPrice + "\n";
+            }
         }
         return data;
     }
