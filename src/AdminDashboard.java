@@ -5,19 +5,18 @@ public class AdminDashboard extends JFrame {
 
     User currentUser;
 
-    JButton addEmpBtn, showEmpBtn, deleteEmpBtn, updateEmpBtn, searchEmpBtn;
-    JButton addMealBtn, showMealBtn, updateMealBtn, searchMealBtn;
-    JButton addOfferBtn, employeeReportBtn, mealReportBtn;
-    JButton updateAdminInfoBtn, logoutBtn;
-    JButton setMarketingBtn, setLoyaltyBtn, setRewardBtn, showProgramsBtn;
+   JButton addEmpBtn, showEmpBtn, deleteEmpBtn, updateEmpBtn, searchEmpBtn;
+JButton addMealBtn, showMealBtn, updateMealBtn, searchMealBtn, deleteMealBtn;
+JButton addOfferBtn, employeeReportBtn, mealReportBtn, customerReportBtn;
+JButton updateAdminInfoBtn, logoutBtn;
+
+JButton setMarketingBtn, setLoyaltyBtn, setRewardBtn, showProgramsBtn;
 
 
-    JButton addOfferBtn, employeeReportBtn, mealReportBtn; JButton deleteMealBtn, customerReportBtn;
-    JButton updateAdminInfoBtn;
-    JButton logoutBtn;
+  
  
     // ✅ أزرار البرامج الجديدة
-    JButton enableMarketingBtn, enableLoyaltyBtn, enableRewardBtn, showProgramsBtn;
+   
  
 
     JTextArea output;
@@ -126,8 +125,9 @@ public class AdminDashboard extends JFrame {
         styleButton(updateMealBtn);styleButton(searchMealBtn);
         styleButton(addOfferBtn);  styleButton(employeeReportBtn); styleButton(mealReportBtn);
         styleButton(updateAdminInfoBtn); styleButton(logoutBtn);
-        styleButton(setMarketingBtn); styleButton(setLoyaltyBtn);
-        styleButton(setRewardBtn);    styleButton(showProgramsBtn);
+       styleButton(setMarketingBtn);
+styleButton(setLoyaltyBtn);
+styleButton(setRewardBtn);  styleButton(showProgramsBtn);
 
         // ===== إضافة =====
         add(addEmpBtn); add(showEmpBtn); add(deleteEmpBtn); add(updateEmpBtn); add(searchEmpBtn);
@@ -160,9 +160,9 @@ public class AdminDashboard extends JFrame {
         styleButton(updateAdminInfoBtn);
         styleButton(logoutBtn);
  
-        styleButton(enableMarketingBtn); // ✅
-        styleButton(enableLoyaltyBtn);   // ✅
-        styleButton(enableRewardBtn);    // ✅
+       // styleButton(enableMarketingBtn); // ✅
+       // styleButton(enableLoyaltyBtn);   // ✅
+        //styleButton(enableRewardBtn);    // ✅
         styleButton(showProgramsBtn);    // ✅
  
         // ===== إضافة كل الأزرار للـ Frame =====
@@ -186,9 +186,9 @@ public class AdminDashboard extends JFrame {
         add(updateAdminInfoBtn);
         add(logoutBtn);
  
-        add(enableMarketingBtn); // ✅
-        add(enableLoyaltyBtn);   // ✅
-        add(enableRewardBtn);    // ✅
+       // add(enableMarketingBtn); // ✅
+        //add(enableLoyaltyBtn);   // ✅
+        //add(enableRewardBtn);    // ✅
         add(showProgramsBtn);    // ✅
  
         add(output);
@@ -321,16 +321,25 @@ public class AdminDashboard extends JFrame {
 
         // ================= REPORTS =================
 
-        employeeReportBtn.addActionListener(e -> {
-            String report = "Employees Report:\n";
-            for (Employee emp : DataStore.employees)
-                report += emp.id + " - " + emp.name + "\n";
-            output.setText(report);
-        });
-            for (Meal m : DataStore.meals)
-                report += m.id + " - " + m.name + " - " + m.price + "\n";
-            output.setText(report);
-        });
+       employeeReportBtn.addActionListener(e -> {
+    String report = "Employees Report:\n";
+
+    for (Employee emp : DataStore.employees) {
+        report += emp.id + " - " + emp.name + "\n";
+    }
+
+    output.setText(report);
+});
+
+mealReportBtn.addActionListener(e -> {
+    String report = "Meals Report:\n";
+
+    for (Meal m : DataStore.meals) {
+        report += m.id + " - " + m.name + " - " + m.price + "\n";
+    }
+
+    output.setText(report);
+});
 
         // ================= ADMIN UPDATE =================
 
@@ -436,5 +445,4 @@ public class AdminDashboard extends JFrame {
         });
 
         setVisible(true);
-    }
-}
+    }}
