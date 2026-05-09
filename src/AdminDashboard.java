@@ -11,6 +11,15 @@ public class AdminDashboard extends JFrame {
     JButton updateAdminInfoBtn, logoutBtn;
     JButton setMarketingBtn, setLoyaltyBtn, setRewardBtn, showProgramsBtn;
 
+
+    JButton addOfferBtn, employeeReportBtn, mealReportBtn; JButton deleteMealBtn, customerReportBtn;
+    JButton updateAdminInfoBtn;
+    JButton logoutBtn;
+ 
+    // ✅ أزرار البرامج الجديدة
+    JButton enableMarketingBtn, enableLoyaltyBtn, enableRewardBtn, showProgramsBtn;
+ 
+
     JTextArea output;
 
     private void styleButton(JButton btn) {
@@ -57,11 +66,18 @@ public class AdminDashboard extends JFrame {
         updateMealBtn = new JButton("Update Meal");
         searchMealBtn = new JButton("Search Meal");
 
+        deleteMealBtn = new JButton("Delete Meal");
+         customerReportBtn = new JButton("Customer Report");
+ 
         addMealBtn.setBounds(20, 80, 120, 30);
         showMealBtn.setBounds(150, 80, 120, 30);
         updateMealBtn.setBounds(280, 80, 120, 30);
         searchMealBtn.setBounds(410, 80, 120, 30);
 
+
+        deleteMealBtn.setBounds(540, 80, 120, 30);
+        customerReportBtn.setBounds(440, 120, 120, 30);
+ 
         // ================= OFFERS / REPORTS =================
         addOfferBtn       = new JButton("Add Offer");
         employeeReportBtn = new JButton("Emp Report");
@@ -121,6 +137,62 @@ public class AdminDashboard extends JFrame {
         add(setMarketingBtn); add(setLoyaltyBtn); add(setRewardBtn); add(showProgramsBtn);
         add(scrollPane);
 
+        output.setBounds(20, 205, 645, 370);
+ 
+        // ===== تنسيق كل الأزرار =====
+        styleButton(addEmpBtn);
+        styleButton(showEmpBtn);
+        styleButton(deleteEmpBtn);
+        styleButton(updateEmpBtn);
+        styleButton(searchEmpBtn);
+ 
+        styleButton(addMealBtn);
+        styleButton(showMealBtn);
+        styleButton(updateMealBtn);
+        styleButton(searchMealBtn);
+        styleButton(deleteMealBtn);
+        styleButton(customerReportBtn);
+ 
+        styleButton(addOfferBtn);
+        styleButton(employeeReportBtn);
+        styleButton(mealReportBtn);
+ 
+        styleButton(updateAdminInfoBtn);
+        styleButton(logoutBtn);
+ 
+        styleButton(enableMarketingBtn); // ✅
+        styleButton(enableLoyaltyBtn);   // ✅
+        styleButton(enableRewardBtn);    // ✅
+        styleButton(showProgramsBtn);    // ✅
+ 
+        // ===== إضافة كل الأزرار للـ Frame =====
+        add(addEmpBtn);
+        add(showEmpBtn);
+        add(deleteEmpBtn);
+        add(updateEmpBtn);
+        add(searchEmpBtn);
+ 
+        add(addMealBtn);
+        add(showMealBtn);
+        add(updateMealBtn);
+        add(searchMealBtn);
+        add(deleteMealBtn);
+        add(customerReportBtn);
+ 
+        add(addOfferBtn);
+        add(employeeReportBtn);
+        add(mealReportBtn);
+ 
+        add(updateAdminInfoBtn);
+        add(logoutBtn);
+ 
+        add(enableMarketingBtn); // ✅
+        add(enableLoyaltyBtn);   // ✅
+        add(enableRewardBtn);    // ✅
+        add(showProgramsBtn);    // ✅
+ 
+        add(output);
+ 
         // ================= EMPLOYEES ACTIONS =================
 
         addEmpBtn.addActionListener(e -> {
@@ -213,6 +285,17 @@ public class AdminDashboard extends JFrame {
             output.setText("❌ Not Found");
         });
 
+        deleteMealBtn.addActionListener(e -> {
+
+    Integer id = InputValidator.getInt(this, "Meal ID:");
+    if (id == null) return;
+
+    DataStore.meals.removeIf(m -> m.id == id);
+    FileManager.saveAll();
+
+    output.setText("✔ Meal Deleted");
+});
+ 
         searchMealBtn.addActionListener(e -> {
             String name = InputValidator.getText(this, "Search Meal:");
             if (name == null) return;
@@ -244,9 +327,6 @@ public class AdminDashboard extends JFrame {
                 report += emp.id + " - " + emp.name + "\n";
             output.setText(report);
         });
-
-        mealReportBtn.addActionListener(e -> {
-            String report = "Meals Report:\n";
             for (Meal m : DataStore.meals)
                 report += m.id + " - " + m.name + " - " + m.price + "\n";
             output.setText(report);
